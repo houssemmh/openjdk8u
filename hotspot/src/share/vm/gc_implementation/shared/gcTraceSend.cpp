@@ -36,6 +36,8 @@
 #include "gc_implementation/g1/g1YCTypes.hpp"
 #endif
 
+#include "lttng/lttng_tp.h"
+
 // All GC dependencies against the trace framework is contained within this file.
 
 typedef uintptr_t TraceAddress;
@@ -222,6 +224,7 @@ class GCHeapSummaryEventSender : public GCHeapSummaryVisitor {
       e.set_heapUsed(heap_summary->used());
       e.commit();
     }
+    tracepoint(jvm,heap_info, (int) _gc_id.id(), (int) _when, heap_space.committed_size(), heap_summary->used());
   }
 
   void visit(const PSHeapSummary* ps_heap_summary) const {

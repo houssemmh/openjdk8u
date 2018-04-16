@@ -42,6 +42,7 @@
 #include "utilities/dtrace.hpp"
 #include "utilities/macros.hpp"
 #include "utilities/preserveException.hpp"
+#include "lttng/lttng_tp.h"
 #ifdef TARGET_OS_FAMILY_linux
 # include "os_linux.inline.hpp"
 #endif
@@ -382,7 +383,7 @@ void ATTR ObjectMonitor::enter(TRAPS) {
     JavaThreadBlockedOnMonitorEnterState jtbmes(jt, this);
 
     Self->set_current_pending_monitor(this);
-
+    tracepoint(jvm, contended_enter);
     DTRACE_MONITOR_PROBE(contended__enter, this, object(), jt);
     if (JvmtiExport::should_post_monitor_contended_enter()) {
       JvmtiExport::post_monitor_contended_enter(jt, this);
@@ -452,8 +453,8 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   // time -- such as next time some thread encounters contention but has
   // yet to acquire the lock.  While spinning that thread could
   // spinning we could increment JVMStat counters, etc.
-
-  DTRACE_MONITOR_PROBE(contended__entered, this, object(), jt);
+  tracepoint(jvm, contended_entered);
+  DTRACE_MONITOR_PROBE(contended_entered, this, object(), jt);
   if (JvmtiExport::should_post_monitor_contended_entered()) {
     JvmtiExport::post_monitor_contended_entered(jt, this);
 
@@ -1350,6 +1351,7 @@ void ObjectMonitor::ExitEpilog (Thread * Self, ObjectWaiter * Wakee) {
    }
 
    DTRACE_MONITOR_PROBE(contended__exit, this, object(), Self);
+   tracepoint(jvm, contended_exit);
    Trigger->unpark() ;
 
    // Maintain stats and report events to JVMTI
@@ -1702,6 +1704,7 @@ void ObjectMonitor::notify(TRAPS) {
      return ;
   }
   DTRACE_MONITOR_PROBE(notify, this, object(), THREAD);
+  tracepoint(jvm, notify);
 
   int Policy = Knob_MoveNotifyee ;
 
@@ -1822,6 +1825,7 @@ void ObjectMonitor::notifyAll(TRAPS) {
       return ;
   }
   DTRACE_MONITOR_PROBE(notifyAll, this, object(), THREAD);
+  tracepoint(jvm, notifyAll);
 
   int Policy = Knob_MoveNotifyee ;
   int Tally = 0 ;

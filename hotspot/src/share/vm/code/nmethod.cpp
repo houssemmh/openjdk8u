@@ -47,6 +47,8 @@
 #include "shark/sharkCompiler.hpp"
 #endif
 
+#include "lttng/lttng_tp.h"
+
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 unsigned char nmethod::_global_unloading_clock = 0;
@@ -1678,6 +1680,7 @@ void nmethod::post_compiled_method_load_event() {
       insts_begin(), insts_size());
 #endif /* USDT2 */
 
+  tracepoint(jvm, method_load, moop->klass_name()->as_C_string(), moop->name()->as_C_string(), moop->signature()->as_C_string());
   if (JvmtiExport::should_post_compiled_method_load() ||
       JvmtiExport::should_post_compiled_method_unload()) {
     get_and_cache_jmethod_id();
@@ -1701,6 +1704,7 @@ jmethodID nmethod::get_and_cache_jmethod_id() {
 }
 
 void nmethod::post_compiled_method_unload() {
+  Method* moop = method();
   if (unload_reported()) {
     // During unloading we transition to unloaded and then to zombie
     // and the unloading is reported during the first transition.
@@ -1709,6 +1713,7 @@ void nmethod::post_compiled_method_unload() {
 
   assert(_method != NULL && !is_unloaded(), "just checking");
   DTRACE_METHOD_UNLOAD_PROBE(method());
+  tracepoint(jvm, method_unload, moop->klass_name()->as_C_string(), moop->name()->as_C_string(), moop->signature()->as_C_string());
 
   // If a JVMTI agent has enabled the CompiledMethodUnload event then
   // post the event. Sometime later this nmethod will be made a zombie

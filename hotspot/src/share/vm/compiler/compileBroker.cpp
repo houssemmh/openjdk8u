@@ -56,6 +56,8 @@
 #include "shark/sharkCompiler.hpp"
 #endif
 
+#include "lttng/lttng_tp.h"
+
 #ifdef DTRACE_ENABLED
 
 // Only bother with this argument setup if dtrace is available
@@ -1953,6 +1955,7 @@ void CompileBroker::invoke_compiler_on_method(CompileTask* task) {
     set_last_compile(thread, method, is_osr, task_level);
 
     DTRACE_METHOD_COMPILE_BEGIN_PROBE(method, compiler_name(task_level));
+    tracepoint(jvm, method_compile_begin, (method)->klass_name()->as_C_string(), (method)->name()->as_C_string(), (method)->signature()->as_C_string());
   }
 
   // Allocate a new set of JNI handles.
@@ -2047,6 +2050,7 @@ void CompileBroker::invoke_compiler_on_method(CompileTask* task) {
   methodHandle method(thread, task->method());
 
   DTRACE_METHOD_COMPILE_END_PROBE(method, compiler_name(task_level), task->is_success());
+  tracepoint(jvm, method_compile_end, (method)->klass_name()->as_C_string(), (method)->name()->as_C_string(), (method)->signature()->as_C_string());
 
   collect_statistics(thread, time, task);
 

@@ -40,6 +40,7 @@
 #include "runtime/signature.hpp"
 #include "runtime/stubRoutines.hpp"
 #include "runtime/thread.inline.hpp"
+#include "lttng/lttng_tp.h"
 
 // -----------------------------------------------------
 // Implementation of JavaCallWrapper

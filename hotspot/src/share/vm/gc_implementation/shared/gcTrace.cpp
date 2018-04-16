@@ -49,7 +49,7 @@
 
 void GCTracer::report_gc_start_impl(GCCause::Cause cause, const Ticks& timestamp) {
   assert_unset_gc_id();
-
+  ResourceMark rm;
   GCId gc_id = GCId::create();
   _shared_gc_info.set_gc_id(gc_id);
   _shared_gc_info.set_cause(cause);
@@ -68,7 +68,8 @@ bool GCTracer::has_reported_gc_start() const {
 }
 
 void GCTracer::report_gc_end_impl(const Ticks& timestamp, TimePartitions* time_partitions) {
-  assert_set_gc_id();
+	ResourceMark rm;
+	assert_set_gc_id();
 
   _shared_gc_info.set_sum_of_pauses(time_partitions->sum_of_pauses());
   _shared_gc_info.set_longest_pause(time_partitions->longest_pause());

@@ -114,6 +114,273 @@ TRACEPOINT_EVENT(
     )
 )
 
+TRACEPOINT_EVENT(
+    jvm,
+	method_load,
+    TP_ARGS(
+    	char*, className,
+		char*, methodName,
+		char*, signature
+    ),
+    TP_FIELDS(
+    	ctf_string(className, className)
+		ctf_string(methodName, methodName)
+		ctf_string(signature, signature)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	method_unload,
+    TP_ARGS(
+    	char*, className,
+		char*, methodName,
+		char*, signature
+    ),
+    TP_FIELDS(
+    	ctf_string(className, className)
+		ctf_string(methodName, methodName)
+		ctf_string(signature, signature)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	heap_info,
+    TP_ARGS(
+        int, gc_id,
+		int, when,
+		int, commited,
+		int, used
+    ),
+    TP_FIELDS(
+        ctf_integer(int, gc_id, gc_id)
+		ctf_integer(int, when, when)
+		ctf_integer(int, commited, commited)
+		ctf_integer(int, used, used)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	method_entry,
+    TP_ARGS(
+    	char*, className,
+		char*, methodName,
+		char*, signature
+    ),
+    TP_FIELDS(
+    	ctf_string(className, className)
+		ctf_string(methodName, methodName)
+		ctf_string(signature, signature)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	method_return,
+    TP_ARGS(
+    	char*, className,
+		char*, methodName,
+		char*, signature
+    ),
+    TP_FIELDS(
+    	ctf_string(className, className)
+		ctf_string(methodName, methodName)
+		ctf_string(signature, signature)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	thread_start,
+    TP_ARGS(
+    	char*, name,
+		int, java_threadid,
+		int, os_threadid,
+		int, deamon
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(int, java_threadid, java_threadid)
+		ctf_integer(int, os_threadid, os_threadid)
+		ctf_integer(int, deamon, deamon)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	thread_stop,
+    TP_ARGS(
+    	char*, name,
+		int, java_threadid,
+		int, os_threadid,
+		int, deamon
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(int, java_threadid, java_threadid)
+		ctf_integer(int, os_threadid, os_threadid)
+		ctf_integer(int, deamon, deamon)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	thread_sleep_start,
+    TP_ARGS(
+    	char*, name,
+		int, java_threadid,
+		int, os_threadid,
+		int, deamon,
+		long, millis
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(int, java_threadid, java_threadid)
+		ctf_integer(int, os_threadid, os_threadid)
+		ctf_integer(int, deamon, deamon)
+		ctf_integer(long, millis, millis)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	thread_sleep_end,
+    TP_ARGS(
+    	char*, name,
+		int, java_threadid,
+		int, os_threadid,
+		int, deamon,
+		int, status
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(int, java_threadid, java_threadid)
+		ctf_integer(int, os_threadid, os_threadid)
+		ctf_integer(int, deamon, deamon)
+		ctf_integer(int, status, status)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	vmops_begin,
+    TP_ARGS(
+    	char*, name,
+		int, evaluation_mode,
+		int, is_concurrent,
+		int, calling_thread
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(int, evaluation_mode, evaluation_mode)
+		ctf_integer(int, is_concurrent, is_concurrent)
+		ctf_integer(int, calling_thread, calling_thread)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	vmops_end,
+    TP_ARGS(
+    	char*, name,
+		int, evaluation_mode,
+		int, is_concurrent,
+		int, calling_thread
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(int, evaluation_mode, evaluation_mode)
+		ctf_integer(int, is_concurrent, is_concurrent)
+		ctf_integer(int, calling_thread, calling_thread)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	vmtojava,
+    TP_ARGS(
+    		int, res
+    ),
+    TP_FIELDS(
+    		ctf_integer(int, res, res)
+    )
+)
+
+
+TRACEPOINT_EVENT(
+    jvm,
+    object_alloc,
+    TP_ARGS(
+    	char*, name,
+    	int, size
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+    	ctf_integer(int, size, size)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    contended_enter,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    contended_entered,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    contended_exit,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    notify,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    notifyAll,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
+
+
+
+TRACEPOINT_EVENT(
+    jvm,
+    monitor_waited,
+    TP_ARGS(
+    ),
+    TP_FIELDS(
+    )
+)
+
+
+
+
 #endif /* LTTNG_TP_H */
 
 #include <lttng/tracepoint-event.h>

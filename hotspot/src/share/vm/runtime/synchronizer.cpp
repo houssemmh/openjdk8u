@@ -40,6 +40,7 @@
 #include "utilities/dtrace.hpp"
 #include "utilities/events.hpp"
 #include "utilities/preserveException.hpp"
+#include "lttng/lttng_tp.h"
 #ifdef TARGET_OS_FAMILY_linux
 # include "os_linux.inline.hpp"
 #endif
@@ -143,6 +144,7 @@ HS_DTRACE_PROBE_DECL4(hotspot, monitor__waited,
 // This exists only as a workaround of dtrace bug 6254741
 int dtrace_waited_probe(ObjectMonitor* monitor, Handle obj, Thread* thr) {
   DTRACE_MONITOR_PROBE(waited, monitor, obj(), thr);
+  tracepoint(jvm, monitor_waited);
   return 0;
 }
 

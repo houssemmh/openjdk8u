@@ -84,6 +84,7 @@
 #include "utilities/events.hpp"
 #include "utilities/preserveException.hpp"
 #include "utilities/macros.hpp"
+#include "lttng/lttng_tp.h"
 #ifdef TARGET_OS_FAMILY_linux
 # include "os_linux.inline.hpp"
 #endif
@@ -1659,7 +1660,7 @@ void JavaThread::run() {
   assert(!Thread::current()->owns_locks(), "sanity check");
 
   DTRACE_THREAD_PROBE(start, this);
-
+  tracepoint(jvm, thread_start, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
   // This operation might block. We call that after all safepoint checks for a new thread has
   // been completed.
   this->set_active_handles(JNIHandleBlock::allocate_block());
@@ -1700,6 +1701,7 @@ void JavaThread::thread_main_inner() {
   }
 
   DTRACE_THREAD_PROBE(stop, this);
+  tracepoint(jvm, thread_stop, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
 
   this->exit(false);
   delete this;

@@ -73,6 +73,7 @@
 #include "utilities/histogram.hpp"
 #include "utilities/top.hpp"
 #include "utilities/utf8.hpp"
+#include "lttng/lttng_tp.h"
 #ifdef TARGET_OS_FAMILY_linux
 # include "jvm_linux.h"
 #endif
@@ -3171,6 +3172,7 @@ JVM_END
 
 JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
   JVMWrapper("JVM_Sleep");
+ResourceMark rm;
 
   if (millis < 0) {
     THROW_MSG(vmSymbols::java_lang_IllegalArgumentException(), "timeout value is negative");
@@ -3190,7 +3192,7 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
   HOTSPOT_THREAD_SLEEP_BEGIN(
                              millis);
 #endif /* USDT2 */
-
+  tracepoint(jvm, thread_sleep_start, (char*)(thread)->get_thread_name(), java_lang_Thread::thread_id((thread)->threadObj()), (thread)->osthread()->thread_id(), java_lang_Thread::is_daemon((thread)->threadObj()), millis);
   EventThreadSleep event;
 
   if (millis == 0) {
@@ -3217,6 +3219,7 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
           event.set_time(millis);
           event.commit();
         }
+        tracepoint(jvm, thread_sleep_end, (char*)(thread)->get_thread_name(), java_lang_Thread::thread_id((thread)->threadObj()), (thread)->osthread()->thread_id(), java_lang_Thread::is_daemon((thread)->threadObj()), 1);
 #ifndef USDT2
         HS_DTRACE_PROBE1(hotspot, thread__sleep__end,1);
 #else /* USDT2 */
@@ -3234,6 +3237,7 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
     event.set_time(millis);
     event.commit();
   }
+  tracepoint(jvm, thread_sleep_end, (char*)(thread)->get_thread_name(), java_lang_Thread::thread_id((thread)->threadObj()), (thread)->osthread()->thread_id(), java_lang_Thread::is_daemon((thread)->threadObj()), 1);
 #ifndef USDT2
   HS_DTRACE_PROBE1(hotspot, thread__sleep__end,0);
 #else /* USDT2 */

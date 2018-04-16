@@ -39,6 +39,7 @@
 #include "utilities/dtrace.hpp"
 #include "utilities/events.hpp"
 #include "utilities/xmlstream.hpp"
+#include "lttng/lttng_tp.h"
 
 #ifndef USDT2
 HS_DTRACE_PROBE_DECL3(hotspot, vmops__request, char *, uintptr_t, int);
@@ -363,6 +364,7 @@ void VMThread::evaluate_operation(VM_Operation* op) {
 
   {
     PerfTraceTime vm_op_timer(perf_accumulated_vm_operation_time());
+    tracepoint(jvm, vmops_begin, (char*)op->name(), (int)op->evaluation_mode(), (int)op->evaluate_concurrently(), op->calling_thread()->osthread()->thread_id());
 #ifndef USDT2
     HS_DTRACE_PROBE3(hotspot, vmops__begin, op->name(), strlen(op->name()),
                      op->evaluation_mode());
@@ -388,6 +390,7 @@ void VMThread::evaluate_operation(VM_Operation* op) {
       event.commit();
     }
 
+    tracepoint(jvm, vmops_end, (char*)op->name(), (int)op->evaluation_mode(), (int)op->evaluate_concurrently(), op->calling_thread()->osthread()->thread_id());
 #ifndef USDT2
     HS_DTRACE_PROBE3(hotspot, vmops__end, op->name(), strlen(op->name()),
                      op->evaluation_mode());

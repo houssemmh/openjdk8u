@@ -58,6 +58,7 @@
 #include "utilities/hashtable.inline.hpp"
 #include "utilities/macros.hpp"
 #include "utilities/xmlstream.hpp"
+#include "lttng/lttng_tp.h"
 #ifdef TARGET_ARCH_x86
 # include "nativeInst_x86.hpp"
 # include "vmreg_x86.inline.hpp"
@@ -81,6 +82,8 @@
 #ifdef COMPILER1
 #include "c1/c1_Runtime1.hpp"
 #endif
+
+#include "lttng/lttng_tp.h"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
@@ -982,6 +985,7 @@ int SharedRuntime::dtrace_object_alloc_base(Thread* thread, oopDesc* o, int size
                    get_java_tid(thread),
                    (char *) name->bytes(), name->utf8_length(), size * HeapWordSize);
 #endif /* USDT2 */
+  tracepoint(jvm, object_alloc, name->as_C_string(), size * HeapWordSize);
   return 0;
 }
 
@@ -1003,6 +1007,7 @@ JRT_LEAF(int, SharedRuntime::dtrace_method_entry(
       (char *) name->bytes(), name->utf8_length(),
       (char *) sig->bytes(), sig->utf8_length());
 #endif /* USDT2 */
+  tracepoint(jvm, method_entry, kname->as_C_string(), name->as_C_string(), sig->as_C_string());
   return 0;
 JRT_END
 
@@ -1024,6 +1029,7 @@ JRT_LEAF(int, SharedRuntime::dtrace_method_exit(
       (char *) name->bytes(), name->utf8_length(),
       (char *) sig->bytes(), sig->utf8_length());
 #endif /* USDT2 */
+  tracepoint(jvm, method_return, kname->as_C_string(), name->as_C_string(), sig->as_C_string());
   return 0;
 JRT_END
 
