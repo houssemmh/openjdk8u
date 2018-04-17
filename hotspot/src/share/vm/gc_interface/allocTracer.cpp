@@ -38,7 +38,10 @@ void AllocTracer::send_allocation_outside_tlab_event(KlassHandle klass, size_t a
     event.set_allocationSize(alloc_size);
     event.commit();
   }
-  tracepoint(jvm, alloc_outside_tlab, (char*)klass()->name()->as_C_string(), (int)alloc_size);
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, alloc_outside_tlab, (char*)klass()->name()->as_C_string(), (int)alloc_size);
+  }
 }
 
 void AllocTracer::send_allocation_in_new_tlab_event(KlassHandle klass, size_t tlab_size, size_t alloc_size) {
@@ -49,7 +52,10 @@ void AllocTracer::send_allocation_in_new_tlab_event(KlassHandle klass, size_t tl
     event.set_tlabSize(tlab_size);
     event.commit();
   }
-  tracepoint(jvm, alloc_new_tlab, (char*)klass()->name()->as_C_string(), (int)alloc_size, (int)tlab_size);
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, alloc_new_tlab, (char*)klass()->name()->as_C_string(), (int)alloc_size, (int)tlab_size);
+  }
 }
 
 void AllocTracer::send_allocation_requiring_gc_event(size_t size, const GCId& gcId) {
@@ -59,5 +65,8 @@ void AllocTracer::send_allocation_requiring_gc_event(size_t size, const GCId& gc
     event.set_size(size);
     event.commit();
   }
-  tracepoint(jvm, alloc_requiring_gc, (int)size * HeapWordSize, (int) gcId.id());
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, alloc_requiring_gc, (int)size * HeapWordSize, (int) gcId.id());
+  }
 }

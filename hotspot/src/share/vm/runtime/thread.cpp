@@ -1660,7 +1660,7 @@ void JavaThread::run() {
   assert(!Thread::current()->owns_locks(), "sanity check");
 
   DTRACE_THREAD_PROBE(start, this);
-  tracepoint(jvm, thread_start, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
+
   // This operation might block. We call that after all safepoint checks for a new thread has
   // been completed.
   this->set_active_handles(JNIHandleBlock::allocate_block());
@@ -1674,7 +1674,10 @@ void JavaThread::run() {
      event.set_javalangthread(java_lang_Thread::thread_id(this->threadObj()));
      event.commit();
   }
-
+  {
+	  ResourceMark rm(this);
+	  tracepoint(jvm, thread_start, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
+  }
   // We call another function to do the rest so we are sure that the stack addresses used
   // from there will be lower than the stack base just computed
   thread_main_inner();
@@ -1701,8 +1704,10 @@ void JavaThread::thread_main_inner() {
   }
 
   DTRACE_THREAD_PROBE(stop, this);
-  tracepoint(jvm, thread_stop, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
-
+  {
+	  ResourceMark rm(this);
+	  tracepoint(jvm, thread_stop, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
+  }
   this->exit(false);
   delete this;
 }
