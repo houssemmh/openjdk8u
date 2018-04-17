@@ -383,7 +383,11 @@ void ATTR ObjectMonitor::enter(TRAPS) {
     JavaThreadBlockedOnMonitorEnterState jtbmes(jt, this);
 
     Self->set_current_pending_monitor(this);
-    tracepoint(jvm, contended_enter);
+    {
+    	ResourceMark rm;
+        tracepoint(jvm, contended_enter, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
+    }
+
     DTRACE_MONITOR_PROBE(contended__enter, this, object(), jt);
     if (JvmtiExport::should_post_monitor_contended_enter()) {
       JvmtiExport::post_monitor_contended_enter(jt, this);
@@ -453,7 +457,12 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   // time -- such as next time some thread encounters contention but has
   // yet to acquire the lock.  While spinning that thread could
   // spinning we could increment JVMStat counters, etc.
-  tracepoint(jvm, contended_entered);
+
+  {
+  	ResourceMark rm;
+      tracepoint(jvm, contended_entered, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
+  }
+
   DTRACE_MONITOR_PROBE(contended_entered, this, object(), jt);
   if (JvmtiExport::should_post_monitor_contended_entered()) {
     JvmtiExport::post_monitor_contended_entered(jt, this);
@@ -1351,7 +1360,10 @@ void ObjectMonitor::ExitEpilog (Thread * Self, ObjectWaiter * Wakee) {
    }
 
    DTRACE_MONITOR_PROBE(contended__exit, this, object(), Self);
-   tracepoint(jvm, contended_exit);
+   {
+   	ResourceMark rm;
+       tracepoint(jvm, contended_exit, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
+   }
    Trigger->unpark() ;
 
    // Maintain stats and report events to JVMTI

@@ -326,8 +326,12 @@ TRACEPOINT_EVENT(
     jvm,
     contended_enter,
     TP_ARGS(
+    	unsigned long int, ptr,
+    	char*, name
     ),
     TP_FIELDS(
+    	ctf_integer(unsigned long int, ptr, ptr)
+    	ctf_string(name, name)
     )
 )
 
@@ -335,19 +339,28 @@ TRACEPOINT_EVENT(
     jvm,
     contended_entered,
     TP_ARGS(
-    ),
-    TP_FIELDS(
-    )
+		unsigned long int, ptr,
+		char*, name
+	),
+	TP_FIELDS(
+		ctf_integer(unsigned long int, ptr, ptr)
+		ctf_string(name, name)
+	)
 )
 
 TRACEPOINT_EVENT(
     jvm,
     contended_exit,
     TP_ARGS(
-    ),
-    TP_FIELDS(
-    )
+		unsigned long int, ptr,
+		char*, name
+	),
+	TP_FIELDS(
+		ctf_integer(unsigned long int, ptr, ptr)
+		ctf_string(name, name)
+	)
 )
+
 
 TRACEPOINT_EVENT(
     jvm,
