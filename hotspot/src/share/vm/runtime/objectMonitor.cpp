@@ -321,7 +321,6 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   // and to reduce RTS->RTO cache line upgrades on SPARC and IA32 processors.
   Thread * const Self = THREAD ;
   void * cur ;
-
   cur = Atomic::cmpxchg_ptr (Self, &_owner, NULL) ;
   if (cur == NULL) {
      // Either ASSERT _recursions == 0 or explicitly set _recursions = 0.
@@ -459,7 +458,7 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   // spinning we could increment JVMStat counters, etc.
 
   {
-  	ResourceMark rm;
+	  ResourceMark rm;
       tracepoint(jvm, contended_entered, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
   }
 
@@ -1361,7 +1360,7 @@ void ObjectMonitor::ExitEpilog (Thread * Self, ObjectWaiter * Wakee) {
 
    DTRACE_MONITOR_PROBE(contended__exit, this, object(), Self);
    {
-   	ResourceMark rm;
+	   ResourceMark rm;
        tracepoint(jvm, contended_exit, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
    }
    Trigger->unpark() ;
@@ -1716,7 +1715,10 @@ void ObjectMonitor::notify(TRAPS) {
      return ;
   }
   DTRACE_MONITOR_PROBE(notify, this, object(), THREAD);
-  tracepoint(jvm, notify);
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, notify, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
+  }
 
   int Policy = Knob_MoveNotifyee ;
 
@@ -1837,7 +1839,10 @@ void ObjectMonitor::notifyAll(TRAPS) {
       return ;
   }
   DTRACE_MONITOR_PROBE(notifyAll, this, object(), THREAD);
-  tracepoint(jvm, notifyAll);
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, notifyAll, (uintptr_t)(this), (char*)((oop)object())->klass()->name()->as_C_string());
+  }
 
   int Policy = Knob_MoveNotifyee ;
   int Tally = 0 ;

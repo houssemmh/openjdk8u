@@ -14,12 +14,12 @@ TRACEPOINT_EVENT(
     jvm,
 	report_gc_start,
     TP_ARGS(
-        int, id,
-		int, name
+    	long, id,
+        long, name
     ),
     TP_FIELDS(
-        ctf_integer(int, id, id)
-		ctf_integer(int, name, name)
+        ctf_integer(long, id, id)
+		ctf_integer(long, name, name)
     )
 )
 
@@ -28,16 +28,16 @@ TRACEPOINT_EVENT(
     jvm,
 	report_gc_end,
     TP_ARGS(
-        int, id,
-        int, name,
-		int, cause,
+    	long, id,
+        long, name,
+        long, cause,
 		long, sumOfPauses,
 		long, longuestPause
     ),
     TP_FIELDS(
-    	ctf_integer(int, id, id)
-        ctf_integer(int, name, name)
-        ctf_integer(int, cause, cause)
+    	ctf_integer(long, id, id)
+        ctf_integer(long, name, name)
+        ctf_integer(long, cause, cause)
 		ctf_integer(long, sumOfPauses, sumOfPauses)
 		ctf_integer(long, longuestPause, longuestPause)
     )
@@ -47,12 +47,12 @@ TRACEPOINT_EVENT(
     jvm,
 	alloc_requiring_gc,
     TP_ARGS(
-        int, size,
-		int, gcid
+    	long, size,
+    	long, gcid
     ),
     TP_FIELDS(
-        ctf_integer(int, size, size)
-		ctf_integer(int, gcid, gcid)
+        ctf_integer(long, size, size)
+		ctf_integer(long, gcid, gcid)
     )
 )
 
@@ -61,13 +61,13 @@ TRACEPOINT_EVENT(
 	alloc_new_tlab,
     TP_ARGS(
     	char*, name,
-        int, alloc_size,
-		int, tlab_size
+    	long, alloc_size,
+    	long, tlab_size
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-        ctf_integer(int, alloc_size, alloc_size)
-		ctf_integer(int, tlab_size, tlab_size)
+        ctf_integer(long, alloc_size, alloc_size)
+		ctf_integer(long, tlab_size, tlab_size)
     )
 )
 
@@ -76,11 +76,11 @@ TRACEPOINT_EVENT(
 	alloc_outside_tlab,
     TP_ARGS(
     	char*, name,
-        int, alloc_size
+    	long, alloc_size
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-        ctf_integer(int, alloc_size, alloc_size)
+        ctf_integer(long, alloc_size, alloc_size)
     )
 )
 
@@ -148,16 +148,16 @@ TRACEPOINT_EVENT(
     jvm,
 	heap_info,
     TP_ARGS(
-        int, gc_id,
-		int, when,
-		int, commited,
-		int, used
+    	long, gc_id,
+    	long, when,
+    	long, commited,
+    	long, used
     ),
     TP_FIELDS(
-        ctf_integer(int, gc_id, gc_id)
-		ctf_integer(int, when, when)
-		ctf_integer(int, commited, commited)
-		ctf_integer(int, used, used)
+        ctf_integer(long, gc_id, gc_id)
+		ctf_integer(long, when, when)
+		ctf_integer(long, commited, commited)
+		ctf_integer(long, used, used)
     )
 )
 
@@ -196,15 +196,17 @@ TRACEPOINT_EVENT(
 	thread_start,
     TP_ARGS(
     	char*, name,
-		int, java_threadid,
-		int, os_threadid,
-		int, deamon
+    	long, java_threadid,
+    	long, os_threadid,
+    	long, deamon,
+    	long, compiler
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-		ctf_integer(int, java_threadid, java_threadid)
-		ctf_integer(int, os_threadid, os_threadid)
-		ctf_integer(int, deamon, deamon)
+		ctf_integer(long, java_threadid, java_threadid)
+		ctf_integer(long, os_threadid, os_threadid)
+		ctf_integer(long, deamon, deamon)
+		ctf_integer(long, compiler, compiler)
     )
 )
 
@@ -213,15 +215,89 @@ TRACEPOINT_EVENT(
 	thread_stop,
     TP_ARGS(
     	char*, name,
-		int, java_threadid,
-		int, os_threadid,
-		int, deamon
+    	long, java_threadid,
+    	long, os_threadid,
+    	long, deamon
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-		ctf_integer(int, java_threadid, java_threadid)
-		ctf_integer(int, os_threadid, os_threadid)
-		ctf_integer(int, deamon, deamon)
+		ctf_integer(long, java_threadid, java_threadid)
+		ctf_integer(long, os_threadid, os_threadid)
+		ctf_integer(long, deamon, deamon)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	vmthread_start,
+    TP_ARGS(
+    	char*, name,
+    	long, os_threadid
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(long, os_threadid, os_threadid)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	vmthread_stop,
+    TP_ARGS(
+    	char*, name,
+    	long, os_threadid
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(long, os_threadid, os_threadid)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	gctaskthread_start,
+    TP_ARGS(
+    	char*, name,
+    	long, os_threadid
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(long, os_threadid, os_threadid)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	gctaskthread_end,
+    TP_ARGS(
+    	char*, name,
+    	long, os_threadid
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+		ctf_integer(long, os_threadid, os_threadid)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	gctask_start,
+    TP_ARGS(
+    	char*, name
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+	gctask_end,
+    TP_ARGS(
+    	char*, name
+    ),
+    TP_FIELDS(
+    	ctf_string(name, name)
     )
 )
 
@@ -230,16 +306,16 @@ TRACEPOINT_EVENT(
 	thread_sleep_start,
     TP_ARGS(
     	char*, name,
-		int, java_threadid,
-		int, os_threadid,
-		int, deamon,
+    	long, java_threadid,
+    	long, os_threadid,
+    	long, deamon,
 		long, millis
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-		ctf_integer(int, java_threadid, java_threadid)
-		ctf_integer(int, os_threadid, os_threadid)
-		ctf_integer(int, deamon, deamon)
+		ctf_integer(long, java_threadid, java_threadid)
+		ctf_integer(long, os_threadid, os_threadid)
+		ctf_integer(long, deamon, deamon)
 		ctf_integer(long, millis, millis)
     )
 )
@@ -249,17 +325,17 @@ TRACEPOINT_EVENT(
 	thread_sleep_end,
     TP_ARGS(
     	char*, name,
-		int, java_threadid,
-		int, os_threadid,
-		int, deamon,
-		int, status
+    	long, java_threadid,
+    	long, os_threadid,
+    	long, deamon,
+    	long, status
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-		ctf_integer(int, java_threadid, java_threadid)
-		ctf_integer(int, os_threadid, os_threadid)
-		ctf_integer(int, deamon, deamon)
-		ctf_integer(int, status, status)
+		ctf_integer(long, java_threadid, java_threadid)
+		ctf_integer(long, os_threadid, os_threadid)
+		ctf_integer(long, deamon, deamon)
+		ctf_integer(long, status, status)
     )
 )
 
@@ -268,15 +344,15 @@ TRACEPOINT_EVENT(
 	vmops_begin,
     TP_ARGS(
     	char*, name,
-		int, evaluation_mode,
-		int, is_concurrent,
-		int, calling_thread
+    	long, evaluation_mode,
+    	long, is_concurrent,
+    	long, calling_thread
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-		ctf_integer(int, evaluation_mode, evaluation_mode)
-		ctf_integer(int, is_concurrent, is_concurrent)
-		ctf_integer(int, calling_thread, calling_thread)
+		ctf_integer(long, evaluation_mode, evaluation_mode)
+		ctf_integer(long, is_concurrent, is_concurrent)
+		ctf_integer(long, calling_thread, calling_thread)
     )
 )
 
@@ -285,15 +361,15 @@ TRACEPOINT_EVENT(
 	vmops_end,
     TP_ARGS(
     	char*, name,
-		int, evaluation_mode,
-		int, is_concurrent,
-		int, calling_thread
+    	long, evaluation_mode,
+    	long, is_concurrent,
+    	long, calling_thread
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-		ctf_integer(int, evaluation_mode, evaluation_mode)
-		ctf_integer(int, is_concurrent, is_concurrent)
-		ctf_integer(int, calling_thread, calling_thread)
+		ctf_integer(long, evaluation_mode, evaluation_mode)
+		ctf_integer(long, is_concurrent, is_concurrent)
+		ctf_integer(long, calling_thread, calling_thread)
     )
 )
 
@@ -301,10 +377,10 @@ TRACEPOINT_EVENT(
     jvm,
 	vmtojava,
     TP_ARGS(
-    		int, res
+    		long, res
     ),
     TP_FIELDS(
-    		ctf_integer(int, res, res)
+    		ctf_integer(long, res, res)
     )
 )
 
@@ -314,11 +390,24 @@ TRACEPOINT_EVENT(
     object_alloc,
     TP_ARGS(
     	char*, name,
-    	int, size
+    	long, size
     ),
     TP_FIELDS(
     	ctf_string(name, name)
-    	ctf_integer(int, size, size)
+    	ctf_integer(long, size, size)
+    )
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    contended_ask,
+    TP_ARGS(
+    	unsigned long int, ptr,
+    	char*, name
+    ),
+    TP_FIELDS(
+    	ctf_integer(unsigned long int, ptr, ptr)
+    	ctf_string(name, name)
     )
 )
 
@@ -364,32 +453,73 @@ TRACEPOINT_EVENT(
 
 TRACEPOINT_EVENT(
     jvm,
+    monitor_wait,
+    TP_ARGS(
+		unsigned long int, ptr,
+		char*, name,
+		long, millis
+	),
+	TP_FIELDS(
+		ctf_integer(unsigned long int, ptr, ptr)
+		ctf_string(name, name)
+		ctf_integer(long, millis, millis)
+	)
+)
+
+TRACEPOINT_EVENT(
+    jvm,
+    monitor_waited,
+    TP_ARGS(
+		unsigned long int, ptr,
+		char*, name
+	),
+	TP_FIELDS(
+		ctf_integer(unsigned long int, ptr, ptr)
+		ctf_string(name, name)
+	)
+)
+
+
+TRACEPOINT_EVENT(
+    jvm,
     notify,
     TP_ARGS(
-    ),
-    TP_FIELDS(
-    )
+		unsigned long int, ptr,
+		char*, name
+	),
+	TP_FIELDS(
+		ctf_integer(unsigned long int, ptr, ptr)
+		ctf_string(name, name)
+	)
 )
 
 TRACEPOINT_EVENT(
     jvm,
     notifyAll,
     TP_ARGS(
-    ),
-    TP_FIELDS(
-    )
+		unsigned long int, ptr,
+		char*, name
+	),
+	TP_FIELDS(
+		ctf_integer(unsigned long int, ptr, ptr)
+		ctf_string(name, name)
+	)
 )
-
 
 
 TRACEPOINT_EVENT(
     jvm,
-    monitor_waited,
+    thread_status,
     TP_ARGS(
+    	long, status
     ),
     TP_FIELDS(
+    	ctf_integer(long, status, status)
     )
 )
+
+
+
 
 
 

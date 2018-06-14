@@ -144,7 +144,10 @@ HS_DTRACE_PROBE_DECL4(hotspot, monitor__waited,
 // This exists only as a workaround of dtrace bug 6254741
 int dtrace_waited_probe(ObjectMonitor* monitor, Handle obj, Thread* thr) {
   DTRACE_MONITOR_PROBE(waited, monitor, obj(), thr);
-  tracepoint(jvm, monitor_waited);
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, monitor_waited, (uintptr_t)(monitor), (char*)((oop)obj())->klass()->name()->as_C_string());
+  }
   return 0;
 }
 
@@ -388,6 +391,10 @@ void ObjectSynchronizer::wait(Handle obj, jlong millis, TRAPS) {
   }
   ObjectMonitor* monitor = ObjectSynchronizer::inflate(THREAD, obj());
   DTRACE_MONITOR_WAIT_PROBE(monitor, obj(), THREAD, millis);
+  {
+	  ResourceMark rm;
+	  tracepoint(jvm, monitor_wait, (uintptr_t)(monitor), (char*)((oop)obj())->klass()->name()->as_C_string(), millis);
+  }
   monitor->wait(millis, true, THREAD);
 
   /* This dummy call is in place to get around dtrace bug 6254741.  Once

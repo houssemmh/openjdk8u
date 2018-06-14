@@ -1676,7 +1676,7 @@ void JavaThread::run() {
   }
   {
 	  ResourceMark rm(this);
-	  tracepoint(jvm, thread_start, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()));
+	  tracepoint(jvm, thread_start, (char*)(this)->get_thread_name(), java_lang_Thread::thread_id((this)->threadObj()), (this)->osthread()->thread_id(), java_lang_Thread::is_daemon((this)->threadObj()),this->is_Compiler_thread());
   }
   // We call another function to do the rest so we are sure that the stack addresses used
   // from there will be lower than the stack base just computed

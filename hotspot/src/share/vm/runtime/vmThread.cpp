@@ -244,6 +244,7 @@ VMThread::VMThread() : NamedThread() {
 
 void VMThread::destroy() {
   if (_vm_thread != NULL) {
+    tracepoint(jvm, vmthread_stop, _vm_thread->name(), _vm_thread->osthread()->thread_id());
     delete _vm_thread;
     _vm_thread = NULL;      // VM thread is gone
   }
@@ -274,6 +275,7 @@ void VMThread::run() {
   os::set_native_priority( this, prio );
 
   // Wait for VM_Operations until termination
+  tracepoint(jvm, vmthread_start, _vm_thread->name(), _vm_thread->osthread()->thread_id());
   this->loop();
 
   // Note the intention to exit before safepointing.

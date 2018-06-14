@@ -33,6 +33,7 @@
 #include "runtime/handles.inline.hpp"
 #include "runtime/os.hpp"
 #include "runtime/thread.hpp"
+#include "lttng/lttng_tp.h"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
@@ -57,6 +58,7 @@ GCTaskThread::GCTaskThread(GCTaskManager* manager,
 }
 
 GCTaskThread::~GCTaskThread() {
+  tracepoint(jvm, gctaskthread_end, this->name(), this->osthread()->thread_id());
   if (_time_stamps != NULL) {
     FREE_C_HEAP_ARRAY(GCTaskTimeStamp, _time_stamps, mtGC);
   }
@@ -64,6 +66,7 @@ GCTaskThread::~GCTaskThread() {
 
 void GCTaskThread::start() {
   os::start_thread(this);
+  tracepoint(jvm, gctaskthread_start, this->name(), this->osthread()->thread_id());
 }
 
 GCTaskTimeStamp* GCTaskThread::time_stamp_at(uint index) {
@@ -123,7 +126,6 @@ void GCTaskThread::run() {
   ResourceMark rm_outer;
 
   TimeStamp timer;
-
   for (;/* ever */;) {
     // These are so we can flush the resources allocated in the inner loop.
     HandleMark   hm_inner;
@@ -143,7 +145,9 @@ void GCTaskThread::run() {
 
       // If this is the barrier task, it can be destroyed
       // by the GC task manager once the do_it() executes.
+      tracepoint(jvm, gctask_start, task->name());
       task->do_it(manager(), which());
+      tracepoint(jvm, gctask_end, task->name());
 
       // Use the saved value of is_idle_task because references
       // using "task" are not reliable for the barrier task.

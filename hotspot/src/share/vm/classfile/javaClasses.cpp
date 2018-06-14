@@ -51,6 +51,7 @@
 #include "runtime/thread.inline.hpp"
 #include "runtime/vframe.hpp"
 #include "utilities/preserveException.hpp"
+#include "lttng/lttng_tp.h"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
@@ -1042,6 +1043,10 @@ void java_lang_Thread::set_thread_status(oop java_thread,
   // The threadStatus is only present starting in 1.5
   if (_thread_status_offset > 0) {
     java_thread->int_field_put(_thread_status_offset, status);
+  }
+  {
+      	ResourceMark rm;
+      	tracepoint(jvm, thread_status, (java_lang_Thread::ThreadStatus)java_thread->int_field(_thread_status_offset));
   }
 }
 
