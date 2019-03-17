@@ -40,7 +40,7 @@ else
 ifneq ($(ALT_SDT_H),)
   SDT_H_FILE = $(ALT_SDT_H)
 else
-  SDT_H_FILE = /usr/include/sys/sdt.h
+  SDT_H_FILE = /usr/include/x86_64-linux-gnu/sys/sdt.h 
 endif
 DTRACE_ENABLED = $(shell test -f $(SDT_H_FILE) && echo $(SDT_H_FILE))
 REASON = "$(SDT_H_FILE) not found"
